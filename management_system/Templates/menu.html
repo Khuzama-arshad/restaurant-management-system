@@ -1,0 +1,69 @@
+{% load static tailwind_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Django Tailwind</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
+</head>
+
+<body class="bg-gray-150 text-black font-serif leading-normal tracking-normal">
+
+<div class="container mx-auto">
+    <section class="grid-cols-3 items-center justify-center h-screen">
+        <h1 class="text-3xl">menu:</h1>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
+      {% for menu in menus %}
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden
+                  hover:shadow-4xl hover:bg-gray-100 transition duration-300 border-gray-100">
+
+        <!-- Image -->
+        <div class="relative">
+          <img src="{{ menu.image.url }}"
+               alt=""
+               class="w-full h-56 object-cover rounded-lg">
+
+          <span class="absolute top-4 left-4 bg-amber-700 text-white
+                       text-sm px-4 py-1 rounded-full">
+            Popular
+          </span>
+        </div>
+        <!-- Content -->
+        <div class="p-6">
+          <h3 class="text-xl font-extrabold text-gray-900">
+            {{ menu.name }}
+          </h3>
+
+          <p class="text-gray-600 mt-2 text-sm leading-relaxed">
+            {{ menu.description|truncatewords:18 }}
+          </p>
+
+          <div class="flex items-center justify-between mt-6">
+            <span class="text-2xl font-extrabold text-gray-900">
+              PKR {{ menu.price }}
+            </span>
+
+            {% comment %} <a href="{% url 'cart_add' menu.id %}"
+               class="bg-orange-500 text-white px-5 py-2 rounded-lg
+                      hover:bg-orange-700 transition">
+              Add to Cart
+            </a> {% endcomment %}
+          </div>
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+    </div>
+</body>
+    </section>
+</div>
+</body>
+</html>
+
