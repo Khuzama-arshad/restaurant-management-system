@@ -1,0 +1,26 @@
+{% load static tailwind_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    {% comment %} <link rel="stylesheet" href="{% static 'style.css' %}"> {% endcomment %}
+     {% tailwind_css %}
+</head>
+<body>
+
+
+{% block heropage %}
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
+
+
+<footer>
+    {% block footer %}{% endblock %}
+</footer>
+</body>
+</html>
