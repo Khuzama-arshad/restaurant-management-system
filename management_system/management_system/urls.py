@@ -18,11 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from account import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('pages.urls')),
+    path("", include("account.urls")),
+    path('home/', include('pages.urls')),
     path('menu/', include("menu.urls")),
+    path('contact/', include("contact.urls")),
 ]
 
 if settings.DEBUG:
