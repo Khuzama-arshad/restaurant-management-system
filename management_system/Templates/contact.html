@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block contactform %}
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex  items-center justify-between">
+
+      <!-- Left: Logo -->
+      <div class="flex items-center pt-7 pb-5 gap-2">
+        <img 
+          src="{% static 'image/koffee-logo.webp' %}" 
+          alt="Logo"
+          class="h-12 w-auto"
+        >
+      </div>
+
+      <!-- Right: Menu -->
+      <ul class="hidden md:flex items-center gap-8 text-lg font-semibold">
+        <li>
+          <a href="#" class="hover:text-[#883b04] transition">
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="/about/" class="hover:text-[#883b04] transition">
+            About
+          </a>
+        </li>
+        <li>
+          <a href="/menu/" class="hover:text-[#883b04] transition">
+            Menu
+          </a>
+        </li>
+        <li>
+          <a href="/contact/" class="hover:text-[#883b04] transition">
+            Contact
+          </a>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+    </nav>
+<h1 class="text-white font-regular-lg text-4xl uppercase text-center pt-9">Contact Us</h1>
+<form method="POST" class="contact-form">
+  {% csrf_token %}
+
+  <div class="form-group">
+    <label>Username</label>
+    {{ form.username }}
+  </div>
+
+  <div class="form-group">
+    <label>Password</label>
+    {{ form.password }}
+  </div>
+
+  <div class="form-group">
+    <label>Email</label>
+    {{ form.email }}
+  </div>
+
+  <div class="form-group">
+    <label>Message</label>
+    {{ form.message }}
+  </div>
+
+  <button type="submit" class="btn-submit">Submit</button>
+</form>
+
+{% endblock  %}
+{% comment %} Footer {% endcomment %}
+{% block footer %}
+ <section 
+    class="relative h-[80vh] flex items-center justify-center bg-cover bg-center"
+    style="background-image: url('{% static "image\footer-bg.webp" %}');"
+    > 
+    <!-- Content -->
+    <div class="relative z-10 text-center max-w-3xl px-6 translate-y-6
+                animate-fadeUp">
+    <div class="flex justify-center pt-7 pb-5 gap-2">
+        <img 
+          src="{% static 'image/koffee-logo.webp' %}" 
+          alt="Logo"
+          class="h-15 w-auto"
+        >
+      </div>
+        <h3 class="font-regular mt-4 text-gray-300 text-base md:text-lg">
+       Discover an elevated coffee experience where craftsmanship meets comfort. From carefully curated cafés to signature blends, we bring you refined flavors and timeless moments — all in one place.
+        </h3>
+
+        <!--  email Button -->
+<form method="POST" class="contact-form">
+  {% csrf_token %}
+  <div class="form-group">
+    <label>Email</label>
+    {{ form.email }}
+  </div>
+  <button type="submit" class="btn-submit">Submit</button>
+</form>
+       
+
+    </div>
+</section>
+<p class="text-[#883b04] flex justify-center font-bold">© 2025 Khuzama | All Rights Reserved</p>
+{% endblock %}
