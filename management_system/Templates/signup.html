@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block contactform %}
+<h1 class="text-white font-regular-lg text-4xl uppercase text-center pt-9">Sign Up</h1>
+<form method="POST" class="contact-form">
+  {% csrf_token %}
+
+  <div class="form-group">
+    <label>Username</label>
+    {{ form.username }}
+  </div>
+  <div class="form-group">
+    <label>First Name</label>
+    {{ form.first_name }}
+  </div>
+  <div class="form-group">
+    <label>Last Name</label>
+    {{ form.last_name }}
+  </div>
+  
+
+  <div class="form-group">
+    <label>Password</label>
+    {{ form.password }}
+  </div>
+
+  <div class="form-group">
+    <label>Email</label>
+    {{ form.email }}
+  </div>
+  <button type="submit" class="btn-submit">Register</button>
+  <a href="/login/" class="text-white underline text-center block pt-4">Already have an account? Login</a>
+</form>
+
+{% endblock  %}
+

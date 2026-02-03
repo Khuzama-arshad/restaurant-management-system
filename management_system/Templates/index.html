@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block hero-page %}
+<section class="hero-page bg-black">
+<nav class="bg-black text-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex  items-center justify-between">
+
+      <!-- Left: Logo -->
+      <div class="flex items-center pt-7 pb-5 gap-2">
+        <img 
+          src="{% static 'image/koffee-logo.webp' %}" 
+          alt="Logo"
+          class="h-12 w-auto"
+        >
+      </div>
+
+      <!-- Right: Menu -->
+      <ul class="hidden md:flex items-center gap-8 text-lg font-semibold">
+        <li>
+          <a href="#" class="hover:text-[#883b04] transition">
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="/about/" class="hover:text-[#883b04] transition">
+            About
+          </a>
+        </li>
+        <li>
+          <a href="/menu/" class="hover:text-[#883b04] transition">
+            Menu
+          </a>
+        </li>
+        <li>
+          <a href="/contact/" class="hover:text-[#883b04] transition">
+            Contact
+          </a>
+        </li>
+        {% comment %} <li>
+          <a href="/login/" class="hover:text-[#883b04] transition">
+            Login
+          </a>
+        </li>
+        <li>
+          <a href="/logout/" class="hover:text-[#883b04] transition">
+            Logout
+          </a>
+        </li> {% endcomment %}
+        
+      </ul>
+
+        <!-- Dropdown -->
+        <div class="relative group">
+          <button class="flex items-center focus:outline-none">
+    <!-- User Icon -->
+<i class="fa-regular fa-user "></i>
+
+  </button>
+
+          <!-- Dropdown Menu -->
+          <div
+            class="absolute right-0 mt-3 w-40 text-white bg-[#883b04] rounded-md shadow-lg
+           border border-gray-100 opacity-80 invisible group-hover:visible">
+              <a href="{% url 'logout' %}"
+                 class="block px-4 py-2 text-[#883b04] hover:bg-gray-100">
+                Logout
+              </a>
+              <a href="{% url 'login' %}"
+                 class="block px-4 py-2 text-[#883b04] hover:bg-gray-100">
+                Login
+              </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+</nav>
+    </div>
+  </div>
+    </nav>
+    {% comment %} Hero-Sectio {% endcomment %}
+    <section 
+    class="relative h-[88vh] flex items-center justify-center bg-cover bg-center"
+    style="background-image: url('{% static "image\hero-slide-3.webp" %}');"
+    >
+    <!-- Dark overlay -->
+    <div class="absolute inset-0 bg-black/60"></div>
+    <!-- Content -->
+    <div class="relative z-10 text-center max-w-3xl px-6 translate-y-6
+                animate-fadeUp">
+    <h1 class="font-regular italic text-white
+                text-4xl md:text-5xl">
+        Welcome Our Koffee
+        </h1>
+        <h1 class="text-white text-4xl md:text-5xl font-bold leading-tight">
+        Live Your Life With Energy
+        </h1>
+
+        <p class="mt-4 text-gray-300 text-base md:text-lg">
+        Experience premium coffee made with passion,  
+        quality beans, and timeless taste.
+        </p>
+
+        <!-- Button -->
+        <div class="mt-8">
+        <a 
+            href="/menu/"
+            class="inline-block px-8 py-3 rounded-full
+                bg-white text-black font-semibold
+                hover:bg-[#883b04] hover:text-white
+                transition-all duration-300
+                hover:scale-105"
+        >
+            View Menu
+        </a>
+        </div>
+
+    </div>
+
+    </section>
+
+
+{% endblock %}
+{% block about %}
+<section class="py-24 bg-white overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+
+    <!-- Image -->
+    <div class="relative">
+      <img class="h-110" src="{% static 'image\about-img.webp' %}"
+           class="rounded-2xl shadow-xl">
+      <div class="absolute -bottom-6 -left-6 bg-[#883b04] text-white p-6 rounded-xl shadow-lg">
+        <p class="text-2xl font-bold">10+</p>
+        <p class="text-sm">Years Experience</p>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div>
+      <span class="text-[#883b04] font-regular-lg uppercase  tracking-widest">
+        About Us
+      </span>
+
+      <h2 class="text-4xl font-extrabold text-gray-900 mt-4 leading-tight">
+        Crafted Coffee <br> Brewed With Passion
+      </h2>
+
+      <p class="text-gray-600 mt-6 leading-relaxed">
+       We serve premium coffee made from carefully selected beans, rich aromas, and expert brewing techniques. Every cup is crafted to deliver comfort, quality, and consistency.
+      </p>
+
+      <ul class="mt-6 space-y-3 text-gray-700">
+        <li>✔ Freshly roasted coffee beans</li>
+        <li>✔ Skilled baristas & perfect blends</li>
+        <li>✔ Warm, hygienic, and welcoming space</li>
+      </ul>
+
+      <div class="mt-8">
+        <a 
+            href="/menu/"
+            class="inline-block px-8 py-3 rounded-full border-2
+                bg-white text-black font-semibold
+                hover:bg-[#883b04] hover:text-white
+                transition-all duration-300
+                hover:scale-105"
+        >
+            Explore Menu
+        </a>
+        </div>
+    </div>
+
+  </div>
+</section>
+{% endblock  %}
+{% comment %} Footer {% endcomment %}
+{% block footer %}
+ <section 
+    class="relative h-[80vh] flex items-center justify-center bg-cover bg-center"
+    style="background-image: url('{% static "image\footer-bg.webp" %}');"
+    > 
+    <!-- Content -->
+    <div class="relative z-10 text-center max-w-3xl px-6 translate-y-6
+                animate-fadeUp">
+    <div class="flex justify-center pt-7 pb-5 gap-2">
+        <img 
+          src="{% static 'image/koffee-logo.webp' %}" 
+          alt="Logo"
+          class="h-15 w-auto"
+        >
+      </div>
+        <h3 class="font-regular mt-4 text-gray-300 text-base md:text-lg">
+       Discover an elevated coffee experience where craftsmanship meets comfort. From carefully curated cafés to signature blends, we bring you refined flavors and timeless moments — all in one place.
+        </h3>
+
+        <!--  email Button -->
+<form method="POST" class="contact-form">
+  {% csrf_token %}
+  <div class="form-group">
+    <label>Email</label>
+    {{ form.email }}
+  </div>
+  <button type="submit" class="btn-submit">Submit</button>
+</form>
+
+    </div>
+</section>
+<p class="text-[#883b04] flex justify-center font-bold">© 2025 Khuzama | All Rights Reserved</p>
+{% endblock %}
