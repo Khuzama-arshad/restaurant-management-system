@@ -2,11 +2,29 @@
 {% load static %}
 
 
+{% block hero-page %}
+<section 
+    class="relative flex items-center justify-center bg-cover bg-center"
+    style="background-image: url('{% static "image\banner-img.webp" %}');"
+    >
+    <!-- Content -->
+    <div class="relative h-40 z-10 text-center items-center pt-17">
+        <div class="text-white flex text-lg font-semibold leading-tight ">
+        <a href="/home/">HOME / </a>
+        <h2 class="pl-2">MENU PAGE</h2>
+        </div>
+
+       
+    </div>
+
+    </section>
+
+{% endblock %}
+
 
 {% block Menu %}
-<div class="container mx-auto bg-white">
+<div class="container mx-auto">
 <section class="grid-cols-3 items-center justify-center h-screen">
-  <h1 class="text-3xl">Menu:</h1>
  <div class="search pt-4 pb-4 flex justify-end ">
     <form class=" pt-4 pb-4 text-orange-600 flex font-bold pr-4" method="GET">
        {{ form.burger_type }}
@@ -16,8 +34,8 @@
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
 
       {% for menu in menus %}
-      <div class="bg-white rounded-2xl shadow-xl overflow-hidden
-                  hover:shadow-4xl hover:bg-gray-100 transition duration-300 border-gray-100">
+      <div class="bg-black rounded-2xl shadow-xl overflow-hidden
+                  hover:shadow-4xl hover:bg-gray-100 transition duration-300">
 
         <!-- Image -->
         <div class="relative">
@@ -32,16 +50,16 @@
         </div>
         <!-- Content -->
         <div class="p-6">
-          <h3 class="text-xl font-extrabold text-gray-900">
+          <h3 class="text-xl font-extrabold text-[#883b04]">
             {{ menu.name }}
           </h3>
 
-          <p class="text-gray-600 mt-2 text-sm leading-relaxed">
+          <p class="text-[#883b04] mt-2 text-sm leading-relaxed">
             {{ menu.description|truncatewords:18 }}
           </p>
 
           <div class="flex items-center justify-between mt-6">
-            <span class="text-2xl font-extrabold text-gray-900">
+            <span class="text-2xl font-extrabold text-[#883b04]">
               $ {{ menu.price }}
             </span>
 
