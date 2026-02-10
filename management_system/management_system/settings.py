@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pages',
-    'menu',
+    'product',
     'contact',
     'account',
     'tailwind',
