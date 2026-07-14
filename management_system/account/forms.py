@@ -42,11 +42,3 @@ class SignupForm(forms.ModelForm):
                 "placeholder": "Write your message",
             }),
         }
-    # class Meta:
-    #     model = Signup
-    #     fields = ['name', 'email', 'message']
-    #     widgets = {
-    #         'name': forms.TextInput(attrs={'placeholder': 'Enter your name'}),
-    #         'email': forms.EmailInput(attrs={'placeholder': 'Enter email'}),
-    #         'message': forms.Textarea(attrs={'placeholder': 'Write your message'}),
-    #     }

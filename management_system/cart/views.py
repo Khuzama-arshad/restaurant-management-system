@@ -11,6 +11,7 @@ def Cart(request):
     subtotal = 0
 
     for item in cart_items.values():
+        item["price"] = float(item["price"])  # Convert price to float
         item["total"] = item["price"] * item["quantity"]
         subtotal += item["total"]
 
