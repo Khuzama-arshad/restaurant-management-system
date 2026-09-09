@@ -1,0 +1,507 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block hero-page %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap');
+    .font-display { font-family: 'Inter', system-ui, sans-serif; }
+    .font-accent  { font-family: 'Playfair Display', serif; }
+    .btn-brand {
+        background: #BE7B3F;
+        transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .btn-brand:hover { background: #a8692f; }
+    /* Navbar scroll effect */
+    #navbar { transition: background 0.3s ease, backdrop-filter 0.3s ease; }
+
+    /* Underline nav hover */
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1.5px;
+        background: #BE7B3F;
+        transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+</style>
+
+<!-- ═══════════════════════════  NAVBAR  ═══════════════════════════ -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-black/40 backdrop-blur-xl border-b border-white/[0.07] font-display" id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+        <div class="flex items-center justify-between h-16 sm:h-20">
+
+            <a href="/"><img src="{% static 'image/koffee-logo.webp' %}" class="h-10 sm:h-11 lg:h-12" alt="Koffee"></a>
+
+            <!-- Desktop links -->
+            <ul class="hidden lg:flex items-center gap-10 text-white/80 text-sm font-medium">
+                {% for label, href in nav_links %}
+                <li>
+                    <a href="{{ href }}" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">{{ label }}</a>
+                </li>
+                {% empty %}
+                <li><a href="/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Home</a></li>
+                <li><a href="/about/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">About</a></li>
+                <li><a href="/product/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Menu</a></li>
+                <li><a href="/contact/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Contact</a></li>
+                {% endfor %}
+            </ul>
+
+            <!-- Right icons -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="/cart/"
+                   class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white
+                          hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                    <i class="fa-solid fa-cart-shopping text-sm"></i>
+                </a>
+
+                <div class="relative group">
+                    <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                                   hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                        <i class="fa-regular fa-user text-white text-sm"></i>
+                    </button>
+                    <div class="absolute right-0 mt-3 w-44 rounded-2xl bg-[#111] border border-white/10 shadow-2xl
+                                opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 overflow-hidden">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i> Logout
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200">
+                            <i class="fa-solid fa-right-to-bracket text-xs"></i> Login
+                        </a>
+                        <a href="{% url 'signup' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200 border-t border-white/10">
+                            <i class="fa-solid fa-user-plus text-xs"></i> Sign Up
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button id="menuBtn"
+                        class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                               text-white hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                    <i class="fa-solid fa-bars text-sm" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-xl border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-1.5">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-house w-4 text-xs"></i> Home
+            </a>
+            <a href="/about/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-circle-info w-4 text-xs"></i> About
+            </a>
+            <a href="/product/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-mug-hot w-4 text-xs"></i> Menu
+            </a>
+            <a href="/contact/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-envelope w-4 text-xs"></i> Contact
+            </a>
+            <div class="mt-3 pt-4 border-t border-white/10">
+                {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#BE7B3F] text-white font-semibold text-sm">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+                {% else %}
+                <div class="flex gap-3">
+                    <a href="{% url 'login' %}" class="flex-1 text-center px-4 py-3 rounded-xl border border-white/20 text-white text-sm hover:bg-white/10 transition">Login</a>
+                    <a href="{% url 'signup' %}" class="flex-1 text-center px-4 py-3 rounded-xl bg-[#BE7B3F] text-white text-sm font-semibold hover:opacity-90 transition">Sign Up</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuIcon = document.getElementById('menuIcon');
+menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    menuIcon.className = mobileMenu.classList.contains('hidden')
+        ? 'fa-solid fa-bars text-sm'
+        : 'fa-solid fa-xmark text-sm';
+});
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('bg-black/90');
+        navbar.classList.remove('bg-black/40');
+    } else {
+        navbar.classList.add('bg-black/40');
+        navbar.classList.remove('bg-black/90');
+    }
+});
+</script>
+<section class="relative flex items-center justify-center bg-cover bg-center bg-[#120c07] overflow-hidden font-display py-20 sm:py-28 md:py-32"
+    style="background-image:url('{% static 'image/banner-img.webp' %}')">
+
+    <!-- Layered overlay: dark gradient + theme-matched glow, so the section still looks intentional even if the image fails to load -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/85 to-[#0d0a08]"></div>
+    <div class="absolute -top-32 -right-32 w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-[#883b04] blur-[160px] opacity-30 pointer-events-none"></div>
+    <div class="absolute -bottom-32 -left-32 w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-[#BE7B3F] blur-[160px] opacity-[0.12] pointer-events-none"></div>
+
+    <!-- Fine grid texture, echoes the roast-label motif -->
+    <div class="absolute inset-0 opacity-[0.04] pointer-events-none"
+         style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:44px 44px;"></div>
+
+    <div class="relative z-10 text-center px-4 sm:px-6 max-w-xl mx-auto">
+        <p class="text-[#BE7B3F] text-[10px] sm:text-[11px] font-semibold tracking-[5px] uppercase mb-4 sm:mb-5">Roastery No. 015 &mdash; Menu</p>
+
+        <h1 class="font-accent text-3xl sm:text-4xl md:text-5xl font-bold text-[#f4ece0] tracking-tight leading-[1.35]">
+            Coffee, read like a <span class="italic font-semibold text-[#BE7B3F]">label,</span>
+            <br class="hidden sm:block">
+            poured like a <span class="italic font-semibold text-[#BE7B3F]">ritual.</span>
+        </h1>
+
+        <p class="mt-5 sm:mt-6 text-[#a99a86] text-sm leading-relaxed max-w-md mx-auto">
+            Single-origin lots, roasted in small batches &mdash; every cup lists its type, price and story.
+        </p>
+
+        <div class="mt-6 sm:mt-7 flex items-center justify-center gap-2.5 text-xs font-medium text-[#8a7b68]">
+            <a href="/" class="hover:text-[#BE7B3F] transition duration-300">Home</a>
+            <span class="w-1 h-1 rounded-full bg-[#BE7B3F]"></span>
+            <span class="text-[#f4ece0]">Menu</span>
+        </div>
+
+        <div class="mt-8 sm:mt-9 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+            <span class="px-3.5 sm:px-4 py-2 rounded-full bg-white/[0.06] border border-white/10 text-[#a99a86] text-[10px] sm:text-[11px] font-mono tracking-wide whitespace-nowrap">Roasted within 14 days</span>
+            <span class="px-3.5 sm:px-4 py-2 rounded-full bg-white/[0.06] border border-white/10 text-[#a99a86] text-[10px] sm:text-[11px] font-mono tracking-wide whitespace-nowrap">Brewed to order</span>
+            <span class="px-3.5 sm:px-4 py-2 rounded-full bg-white/[0.06] border border-white/10 text-[#a99a86] text-[10px] sm:text-[11px] font-mono tracking-wide whitespace-nowrap">{{ products|length }} on the menu today</span>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block Menu %}
+<section class="relative min-h-screen bg-[#0d0a08] py-16 sm:py-20 md:py-24 font-display overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.04] pointer-events-none"
+         style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:44px 44px;"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-5 sm:gap-6 mb-10 sm:mb-12">
+            <div>
+                <p class="text-[#BE7B3F] text-xs font-bold tracking-[5px] uppercase mb-3">Explore</p>
+                <h2 class="font-accent text-2xl sm:text-4xl md:text-5xl font-bold text-[#f4ece0] leading-tight">
+                    Our Delicious
+                    <span class="italic font-semibold text-[#BE7B3F]">Coffees</span>
+                </h2>
+            </div>
+            <p class="text-[#8a7b68] text-sm">
+                Showing <span class="text-[#BE7B3F] font-semibold">{{ products|length }}</span> items
+            </p>
+        </div>
+
+        <!-- Filter / Search Bar -->
+        <form method="GET" id="menu-filter" class="mb-12 sm:mb-16 bg-white/[0.04] border border-white/10 rounded-2xl p-4 sm:p-6 backdrop-blur-xl space-y-5">
+
+            <!-- Search + sort + submit -->
+            <div class="flex flex-col md:flex-row md:items-center gap-3">
+                <div class="relative flex-1 min-w-0 h-12">
+                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8a7b68]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
+                    </svg>
+                    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search the menu&hellip;"
+                           class="w-full h-12 bg-black/20 text-[#f4ece0] text-sm placeholder-[#6b5f50] pl-11 pr-4 rounded-xl
+                                  border border-white/10 focus:outline-none focus:border-[#BE7B3F] transition-all duration-200">
+                </div>
+
+                <div class="relative h-12 w-full md:w-[190px] flex-shrink-0">
+                    <select name="sort" onchange="this.form.submit()"
+                        class="appearance-none w-full h-12 bg-black/20 text-[#f4ece0] text-sm font-medium pl-4 pr-9 rounded-xl
+                               border border-white/10 focus:outline-none focus:border-[#BE7B3F] cursor-pointer
+                               transition-all duration-200 hover:border-white/20">
+                        <option value="" class="bg-neutral-900">Sort: Featured</option>
+                        <option value="price_asc" class="bg-neutral-900" {% if request.GET.sort == "price_asc" %}selected{% endif %}>Price: low to high</option>
+                        <option value="price_desc" class="bg-neutral-900" {% if request.GET.sort == "price_desc" %}selected{% endif %}>Price: high to low</option>
+                        <option value="name" class="bg-neutral-900" {% if request.GET.sort == "name" %}selected{% endif %}>Name: A to Z</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8a7b68]"
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+
+                <button type="submit"
+                    class="btn-brand h-12 px-7 rounded-xl text-[#f4ece0] text-sm font-bold
+                           flex-shrink-0 w-full md:w-auto hover:scale-[1.02] active:scale-95
+                           shadow-lg shadow-[#BE7B3F]/20 hover:shadow-[#BE7B3F]/30">
+                    Search
+                </button>
+            </div>
+
+            <!-- Type pills (auto-submit) -->
+            <div class="flex flex-wrap items-center gap-2 sm:gap-2.5 pt-5 border-t border-white/[0.06]">
+                <span class="text-[11px] font-semibold text-[#8a7b68] uppercase tracking-wider mr-1.5 w-full sm:w-auto mb-1 sm:mb-0">Type</span>
+                <label class="cursor-pointer">
+                    <input type="radio" name="burger_type" value="" class="peer hidden" {% if not request.GET.burger_type %}checked{% endif %} onchange="this.form.submit()">
+                    <span class="block h-10 leading-10 px-5 rounded-full text-xs font-bold border border-white/10 text-[#a99a86]
+                                 peer-checked:bg-[#BE7B3F] peer-checked:text-[#f4ece0] peer-checked:border-[#BE7B3F]
+                                 hover:text-[#f4ece0] hover:border-white/25 transition-all duration-200">All</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="burger_type" value="Hot Coffee" class="peer hidden" {% if request.GET.burger_type == "Hot Coffee" %}checked{% endif %} onchange="this.form.submit()">
+                    <span class="block h-10 leading-10 px-5 rounded-full text-xs font-bold border border-white/10 text-[#a99a86]
+                                 peer-checked:bg-[#BE7B3F] peer-checked:text-[#f4ece0] peer-checked:border-[#BE7B3F]
+                                 hover:text-[#f4ece0] hover:border-white/25 transition-all duration-200">Hot</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="burger_type" value="Cold Coffee" class="peer hidden" {% if request.GET.burger_type == "Cold Coffee" %}checked{% endif %} onchange="this.form.submit()">
+                    <span class="block h-10 leading-10 px-5 rounded-full text-xs font-bold border border-white/10 text-[#a99a86]
+                                 peer-checked:bg-sky-600 peer-checked:text-[#f4ece0] peer-checked:border-sky-600
+                                 hover:text-[#f4ece0] hover:border-white/25 transition-all duration-200">Cold</span>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="burger_type" value="Special Coffee" class="peer hidden" {% if request.GET.burger_type == "Special Coffee" %}checked{% endif %} onchange="this.form.submit()">
+                    <span class="block h-10 leading-10 px-5 rounded-full text-xs font-bold border border-white/10 text-[#a99a86]
+                                 peer-checked:bg-violet-600 peer-checked:text-[#f4ece0] peer-checked:border-violet-600
+                                 hover:text-[#f4ece0] hover:border-white/25 transition-all duration-200">Special</span>
+                </label>
+            </div>
+        </form>
+
+        <!-- Cards Grid -->
+        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-8">
+            {% for product in products %}
+            <div class="group relative bg-[#181310] rounded-3xl overflow-hidden border border-[#332920]
+                        hover:border-[#BE7B3F]/50 transition-all duration-500
+                        hover:-translate-y-2 hover:shadow-[0_30px_70px_rgba(190,123,63,0.2)]">
+
+                <!-- Type badge -->
+                <div class="absolute top-4 left-4 z-10">
+                    <span class="bg-black/60 backdrop-blur-sm px-4 py-1.5 rounded-full text-[#f4ece0] text-xs font-bold tracking-wide border border-white/10">
+                        {% if product.burger_type == "Cold Coffee" %}Cold
+                        {% elif product.burger_type == "Special Coffee" %}Special
+                        {% else %}Hot{% endif %}
+                    </span>
+                </div>
+
+                <!-- Wishlist toggle (client-side only) -->
+                <button type="button" onclick="toggleWishlist(this, {{ product.id }})"
+                        aria-label="Save to favorites"
+                        class="wishlist-btn absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm
+                               border border-white/10 flex items-center justify-center text-[#f4ece0]/70
+                               hover:text-[#BE7B3F] hover:border-[#BE7B3F]/50 transition-all duration-300">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7.5-4.6-10-9.1C.4 8.4 2.3 5 5.7 5c2 0 3.4 1 4.3 2.3C11 6 12.4 5 14.4 5c3.4 0 5.3 3.4 3.7 6.9C19.5 16.4 12 21 12 21z"/>
+                    </svg>
+                </button>
+
+                <!-- Image -->
+                <div class="relative overflow-hidden h-52 sm:h-64">
+                    <img src="{{ product.image.url }}"
+                        alt="{{ product.name }}"
+                        class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#181310] via-[#181310]/20 to-transparent"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-5 sm:p-6">
+                    <span class="text-[#BE7B3F]/80 text-xs font-bold tracking-widest uppercase">
+                        {{ product.burger_type|default:"Coffee" }}
+                    </span>
+
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-[#f4ece0] mt-2 mb-3
+                               group-hover:text-[#BE7B3F] transition duration-300">
+                        {{ product.name }}
+                    </h2>
+
+                    <p class="text-[#8a7b68] text-sm leading-relaxed line-clamp-2">
+                        {{ product.description|truncatewords:18 }}
+                    </p>
+
+                    <div class="my-5 border-t border-white/5"></div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <p class="text-[#8a7b68] text-xs mb-1">Price</p>
+                            <span class="text-2xl sm:text-3xl font-black text-[#BE7B3F] whitespace-nowrap">${{ product.price|floatformat:2 }}</span>
+                        </div>
+
+                        <form action="{% url 'add_to_cart' product.id %}" method="post" class="flex items-center gap-2">
+                            {% csrf_token %}
+
+                            <!-- Quantity stepper -->
+                            <div class="flex items-center border border-white/10 rounded-xl overflow-hidden">
+                                <button type="button" onclick="stepQty(this,-1)"
+                                        class="w-8 h-9 flex items-center justify-center text-[#a99a86] hover:text-[#BE7B3F] hover:bg-white/5 transition">&minus;</button>
+                                <input type="number" name="quantity" value="1" min="1" readonly
+                                       class="w-9 text-center bg-transparent text-[#f4ece0] text-sm font-semibold focus:outline-none">
+                                <button type="button" onclick="stepQty(this,1)"
+                                        class="w-8 h-9 flex items-center justify-center text-[#a99a86] hover:text-[#BE7B3F] hover:bg-white/5 transition">+</button>
+                            </div>
+
+                            <button type="submit"
+                                class="btn-brand flex items-center gap-2 px-5 py-2.5 rounded-xl
+                                       text-[#f4ece0] text-sm font-bold
+                                       hover:scale-105 active:scale-95
+                                       shadow-lg shadow-[#BE7B3F]/25 hover:shadow-[#BE7B3F]/40">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 6h13M7 13L5.4 5M10 21a1 1 0 100-2 1 1 0 000 2zm7 0a1 1 0 100-2 1 1 0 000 2z"/>
+                                </svg>
+                                Add
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Empty State -->
+            <div class="col-span-full text-center py-16 sm:py-24">
+                <svg class="w-16 h-16 mx-auto mb-6 text-[#BE7B3F]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9h13v6a4 4 0 01-4 4H7a4 4 0 01-4-4V9zM16 10h2a3 3 0 010 6h-2M6 2v3M10 2v3M14 2v3"/>
+                </svg>
+                <h3 class="text-2xl font-bold text-[#f4ece0] mb-3">No coffees found</h3>
+                <p class="text-[#8a7b68]">Try a different filter, clear your search, or check back later.</p>
+                <a href="{% url 'product' %}"
+                   class="btn-brand inline-block mt-6 px-8 py-3 rounded-full
+                          text-[#f4ece0] font-bold transition duration-300">
+                    View All
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<script>
+    function stepQty(btn, delta) {
+        const input = btn.parentElement.querySelector('input[name="quantity"]');
+        const next = Math.max(1, parseInt(input.value || '1', 10) + delta);
+        input.value = next;
+    }
+
+    function toggleWishlist(btn, id) {
+        const key = 'wishlist-' + id;
+        const active = localStorage.getItem(key) === '1';
+        localStorage.setItem(key, active ? '0' : '1');
+        btn.classList.toggle('text-[#BE7B3F]', !active);
+        btn.classList.toggle('border-[#BE7B3F]/50', !active);
+    }
+
+    document.querySelectorAll('.wishlist-btn').forEach(function (btn) {
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        const match = onclickAttr.match(/toggleWishlist\(this,\s*(\d+)\)/);
+        if (match && localStorage.getItem('wishlist-' + match[1]) === '1') {
+            btn.classList.add('text-[#BE7B3F]', 'border-[#BE7B3F]/50');
+        }
+    });
+</script>
+{% endblock %}
+
+{% block footer %}
+<footer class="bg-[#0a0705] border-t border-white/5 font-display">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12">
+
+            <!-- Brand -->
+            <div class="sm:col-span-2 lg:col-span-1">
+                <img src="{% static 'image/koffee-logo.webp' %}" class="h-12 sm:h-14 mb-5 sm:mb-6" alt="Koffee Logo">
+                <p class="text-[#8a7b68] text-sm leading-8">
+                    Crafting premium coffee experiences through carefully selected beans,
+                    expert brewing, and exceptional hospitality.
+                </p>
+                <div class="flex gap-3 mt-7 sm:mt-8">
+                    <a href="#" aria-label="Facebook"
+                       class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                              hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                        <i class="fab fa-facebook-f text-[#f4ece0] text-sm"></i>
+                    </a>
+                    <a href="#" aria-label="Instagram"
+                       class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                              hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                        <i class="fab fa-instagram text-[#f4ece0] text-sm"></i>
+                    </a>
+                    <a href="#" aria-label="Twitter"
+                       class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                              hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                        <i class="fab fa-twitter text-[#f4ece0] text-sm"></i>
+                    </a>
+                    <a href="#" aria-label="YouTube"
+                       class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                              hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                        <i class="fab fa-youtube text-[#f4ece0] text-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-[#f4ece0] font-bold text-sm tracking-widest uppercase mb-6">Quick Links</h3>
+                <ul class="space-y-3">
+                    <li><a href="/" class="text-[#8a7b68] hover:text-[#BE7B3F] transition duration-300 text-sm flex items-center gap-2">
+                        <span class="w-1 h-1 rounded-full bg-[#BE7B3F]"></span>Home</a></li>
+                    <li><a href="/about/" class="text-[#8a7b68] hover:text-[#BE7B3F] transition duration-300 text-sm flex items-center gap-2">
+                        <span class="w-1 h-1 rounded-full bg-[#BE7B3F]"></span>About</a></li>
+                    <li><a href="/product/" class="text-[#8a7b68] hover:text-[#BE7B3F] transition duration-300 text-sm flex items-center gap-2">
+                        <span class="w-1 h-1 rounded-full bg-[#BE7B3F]"></span>Menu</a></li>
+                    <li><a href="/contact/" class="text-[#8a7b68] hover:text-[#BE7B3F] transition duration-300 text-sm flex items-center gap-2">
+                        <span class="w-1 h-1 rounded-full bg-[#BE7B3F]"></span>Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Hours -->
+            <div>
+                <h3 class="text-[#f4ece0] font-bold text-sm tracking-widest uppercase mb-6">Opening Hours</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-3 border-b border-white/5">
+                        <span class="text-[#a99a86] text-sm">Mon &ndash; Fri</span>
+                        <span class="text-[#BE7B3F] text-sm font-semibold">8AM &ndash; 10PM</span>
+                    </div>
+                    <div class="flex justify-between items-center py-3 border-b border-white/5">
+                        <span class="text-[#a99a86] text-sm">Sat &ndash; Sun</span>
+                        <span class="text-[#BE7B3F] text-sm font-semibold">9AM &ndash; 11PM</span>
+                    </div>
+                    <div class="flex items-center gap-2 pt-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-green-400 text-xs font-semibold">Open Now</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h3 class="text-[#f4ece0] font-bold text-sm tracking-widest uppercase mb-6">Get in Touch</h3>
+                <div class="space-y-4">
+                    <a href="#" class="flex items-start gap-3 group">
+                        <div class="w-9 h-9 rounded-xl bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#BE7B3F] transition duration-300">
+                            <i class="fas fa-location-dot text-[#BE7B3F] text-xs group-hover:text-[#f4ece0]"></i>
+                        </div>
+                        <span class="text-[#8a7b68] text-sm leading-relaxed group-hover:text-[#c9baa4] transition">Main Coffee Street, Lahore</span>
+                    </a>
+                    <a href="tel:+923001234567" class="flex items-start gap-3 group">
+                        <div class="w-9 h-9 rounded-xl bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#BE7B3F] transition duration-300">
+                            <i class="fas fa-phone text-[#BE7B3F] text-xs group-hover:text-[#f4ece0]"></i>
+                        </div>
+                        <span class="text-[#8a7b68] text-sm group-hover:text-[#c9baa4] transition">+92 300 1234567</span>
+                    </a>
+                    <a href="mailto:info@koffee.com" class="flex items-start gap-3 group">
+                        <div class="w-9 h-9 rounded-xl bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#BE7B3F] transition duration-300">
+                            <i class="fas fa-envelope text-[#BE7B3F] text-xs group-hover:text-[#f4ece0]"></i>
+                        </div>
+                        <span class="text-[#8a7b68] text-sm group-hover:text-[#c9baa4] transition">info@koffee.com</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 sm:mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+            <p class="text-[#6b5f50] text-sm">&copy; 2026 Koffee. All Rights Reserved.</p>
+            <p class="text-[#6b5f50] text-sm">
+                Designed &amp; Developed by <span class="text-[#BE7B3F] font-semibold">Khuzama</span>
+            </p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+{% load static %}
+
+<!--
+  Same type system as the redesigned about page:
+  Fraunces (display) + Inter (body) + IBM Plex Mono (labels/data).
+  Add to base.html <head>:
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+-->
+
+{% block hero-page %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  .font-display { font-family: 'Fraunces', serif; }
+  .font-mono    { font-family: 'IBM Plex Mono', monospace; }
+  body { font-family: 'Inter', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    .font-display { font-family: 'Inter', system-ui, sans-serif; }
+    .font-accent  { font-family: 'Playfair Display', serif; }
+
+    /* Navbar scroll effect */
+    #navbar { transition: background 0.3s ease, backdrop-filter 0.3s ease; }
+
+    /* Underline nav hover */
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1.5px;
+        background: #BE7B3F;
+        transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+</style>
+
+<!-- ═══════════════════════════  NAVBAR  ═══════════════════════════ -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-black/40 backdrop-blur-xl border-b border-white/[0.07] font-display" id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+        <div class="flex items-center justify-between h-16 sm:h-20">
+
+            <a href="/"><img src="{% static 'image/koffee-logo.webp' %}" class="h-10 sm:h-11 lg:h-12" alt="Koffee"></a>
+
+            <!-- Desktop links -->
+            <ul class="hidden lg:flex items-center gap-10 text-white/80 text-sm font-medium">
+                {% for label, href in nav_links %}
+                <li>
+                    <a href="{{ href }}" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">{{ label }}</a>
+                </li>
+                {% empty %}
+                <li><a href="/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Home</a></li>
+                <li><a href="/about/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">About</a></li>
+                <li><a href="/product/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Menu</a></li>
+                <li><a href="/contact/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Contact</a></li>
+                {% endfor %}
+            </ul>
+
+            <!-- Right icons -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="/cart/"
+                   class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white
+                          hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                    <i class="fa-solid fa-cart-shopping text-sm"></i>
+                </a>
+
+                <div class="relative group">
+                    <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                                   hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                        <i class="fa-regular fa-user text-white text-sm"></i>
+                    </button>
+                    <div class="absolute right-0 mt-3 w-44 rounded-2xl bg-[#111] border border-white/10 shadow-2xl
+                                opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 overflow-hidden">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i> Logout
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200">
+                            <i class="fa-solid fa-right-to-bracket text-xs"></i> Login
+                        </a>
+                        <a href="{% url 'signup' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200 border-t border-white/10">
+                            <i class="fa-solid fa-user-plus text-xs"></i> Sign Up
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button id="menuBtn"
+                        class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                               text-white hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                    <i class="fa-solid fa-bars text-sm" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-xl border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-1.5">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-house w-4 text-xs"></i> Home
+            </a>
+            <a href="/about/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-circle-info w-4 text-xs"></i> About
+            </a>
+            <a href="/product/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-mug-hot w-4 text-xs"></i> Menu
+            </a>
+            <a href="/contact/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-envelope w-4 text-xs"></i> Contact
+            </a>
+            <div class="mt-3 pt-4 border-t border-white/10">
+                {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#BE7B3F] text-white font-semibold text-sm">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+                {% else %}
+                <div class="flex gap-3">
+                    <a href="{% url 'login' %}" class="flex-1 text-center px-4 py-3 rounded-xl border border-white/20 text-white text-sm hover:bg-white/10 transition">Login</a>
+                    <a href="{% url 'signup' %}" class="flex-1 text-center px-4 py-3 rounded-xl bg-[#BE7B3F] text-white text-sm font-semibold hover:opacity-90 transition">Sign Up</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuIcon = document.getElementById('menuIcon');
+menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    menuIcon.className = mobileMenu.classList.contains('hidden')
+        ? 'fa-solid fa-bars text-sm'
+        : 'fa-solid fa-xmark text-sm';
+});
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('bg-black/90');
+        navbar.classList.remove('bg-black/40');
+    } else {
+        navbar.classList.add('bg-black/40');
+        navbar.classList.remove('bg-black/90');
+    }
+});
+</script>
+<section
+    class="relative h-[260px] sm:h-[320px] flex items-center justify-center bg-cover bg-center"
+    style="background-image:url('{% static 'image/banner-img.webp' %}')">
+
+    <div class="absolute inset-0 bg-[#0B0907]/80"></div>
+
+    <div class="relative z-10 text-center px-6">
+        <div class="inline-flex items-center gap-3 font-mono text-[11px] tracking-[2px] text-[#BE7B3F] uppercase">
+            <span class="w-6 h-px bg-[#BE7B3F]"></span>
+            Get in touch
+            <span class="w-6 h-px bg-[#BE7B3F]"></span>
+        </div>
+        <h1 class="font-display mt-4 text-4xl sm:text-5xl font-black text-[#F3ECE1]">
+            Contact Us
+        </h1>
+
+        <div class="mt-4 font-mono text-xs sm:text-sm tracking-[1px] uppercase">
+            <a href="/home/" class="text-[#9C8E80] hover:text-[#BE7B3F] transition-colors">Home</a>
+            <span class="text-[#9C8E80] mx-2">/</span>
+            <span class="text-[#F3ECE1]">Contact</span>
+        </div>
+    </div>
+
+</section>
+{% endblock %}
+
+{% block contactform %}
+<section class="relative bg-[#0B0907] py-20 sm:py-28 overflow-hidden">
+
+    <div class="absolute inset-0 opacity-[0.04]" style="background-image:linear-gradient(#F3ECE1 1px,transparent 1px),linear-gradient(90deg,#F3ECE1 1px,transparent 1px);background-size:64px 64px;"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6">
+
+        <!-- Heading -->
+        <div class="text-center mb-14 sm:mb-20">
+            <div class="inline-flex items-center gap-3 font-mono text-[11px] tracking-[2px] text-[#BE7B3F] uppercase">
+                <span class="w-6 h-px bg-[#BE7B3F]"></span>
+                Contact us
+                <span class="w-6 h-px bg-[#BE7B3F]"></span>
+            </div>
+            <h1 class="font-display text-3xl sm:text-5xl lg:text-6xl font-black text-[#F3ECE1] mt-5">
+                We'd love to hear from you
+            </h1>
+            <p class="text-[#9C8E80] mt-6 max-w-2xl mx-auto leading-7 text-sm sm:text-base">
+                Question about an order, feedback on a roast, or just want to
+                say hello — drop us a line and a real person will get back
+                to you within a day.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16 items-start">
+
+            <!-- Left: contact info -->
+            <div class="space-y-3">
+
+                <div class="flex items-start gap-5 p-6 rounded-sm border border-[#F3ECE1]/10 bg-[#15100B]">
+                    <div class="w-12 h-12 shrink-0 rounded-sm bg-[#BE7B3F]/10 border border-[#BE7B3F]/30 flex items-center justify-center">
+                        <i class="fa-solid fa-location-dot text-[#BE7B3F]"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-mono text-[10px] tracking-[1.5px] uppercase text-[#9C8E80]">Address</h3>
+                        <p class="text-[#F3ECE1] mt-1.5">Main Coffee Street, Lahore, Pakistan</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-5 p-6 rounded-sm border border-[#F3ECE1]/10 bg-[#15100B]">
+                    <div class="w-12 h-12 shrink-0 rounded-sm bg-[#BE7B3F]/10 border border-[#BE7B3F]/30 flex items-center justify-center">
+                        <i class="fa-solid fa-phone text-[#BE7B3F]"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-mono text-[10px] tracking-[1.5px] uppercase text-[#9C8E80]">Phone</h3>
+                        <a href="tel:+923001234567" class="text-[#F3ECE1] mt-1.5 block hover:text-[#BE7B3F] transition-colors">+92 300 1234567</a>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-5 p-6 rounded-sm border border-[#F3ECE1]/10 bg-[#15100B]">
+                    <div class="w-12 h-12 shrink-0 rounded-sm bg-[#BE7B3F]/10 border border-[#BE7B3F]/30 flex items-center justify-center">
+                        <i class="fa-solid fa-envelope text-[#BE7B3F]"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-mono text-[10px] tracking-[1.5px] uppercase text-[#9C8E80]">Email</h3>
+                        <a href="mailto:info@koffee.com" class="text-[#F3ECE1] mt-1.5 block hover:text-[#BE7B3F] transition-colors">info@koffee.com</a>
+                    </div>
+                </div>
+
+                <!-- Hours, functional addition -->
+                <div class="p-6 rounded-sm border border-[#F3ECE1]/10 bg-[#15100B]">
+                    <h3 class="font-mono text-[10px] tracking-[1.5px] uppercase text-[#9C8E80] mb-3">Opening hours</h3>
+                    <div class="space-y-1.5 text-sm">
+                        <div class="flex justify-between text-[#F3ECE1]"><span class="text-[#9C8E80]">Mon – Fri</span><span>8:00 AM – 10:00 PM</span></div>
+                        <div class="flex justify-between text-[#F3ECE1]"><span class="text-[#9C8E80]">Sat – Sun</span><span>9:00 AM – 11:00 PM</span></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: form -->
+            <div class="bg-[#15100B] border border-[#F3ECE1]/10 rounded-sm p-6 sm:p-10">
+
+                <form method="POST" class="space-y-5" novalidate>
+                    {% csrf_token %}
+
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label for="contact-name" class="block font-mono text-[10px] tracking-[1.5px] uppercase text-[#9C8E80] mb-2">Name</label>
+                            <input
+                                id="contact-name" type="text" name="name" required
+                                placeholder="Your full name" autocomplete="name"
+                                class="w-full bg-[#0B0907] border border-[#F3ECE1]/15 rounded-sm px-4 py-3 text-sm text-[#F3ECE1] placeholder-[#9C8E80]/60 focus:outline-none focus:border-[#BE7B3F] transition-colors">
+                        </div>
+                        <div>
+                            <label for="contact-email" class="block font-mono text-[10px] tracking-[1.5px] uppercase text-[#9C8E80] mb-2">Email</label>
+                            <input
+                                id="contact-email" type="email" name="email" required
+                                placeholder="you@example.com" autocomplete="email"
+                                class="w-full bg-[#0B0907] border border-[#F3ECE1]/15 rounded-sm px-4 py-3 text-sm text-[#F3ECE1] placeholder-[#9C8E80]/60 focus:outline-none focus:border-[#BE7B3F] transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="contact-subject" class="block font-mono text-[10px] tracking-[1.5px] uppercase text-[#9C8E80] mb-2">Subject</label>
+                        <select
+                            id="contact-subject" name="subject"
+                            class="w-full bg-[#0B0907] border border-[#F3ECE1]/15 rounded-sm px-4 py-3 text-sm text-[#F3ECE1] focus:outline-none focus:border-[#BE7B3F] transition-colors appearance-none">
+                            <option>General enquiry</option>
+                            <option>Order or reservation</option>
+                            <option>Feedback</option>
+                            <option>Wholesale / partnership</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="contact-message" class="block font-mono text-[10px] tracking-[1.5px] uppercase text-[#9C8E80] mb-2">Message</label>
+                        <textarea
+                            id="contact-message" name="message" rows="5" required
+                            placeholder="Tell us a little about what you need"
+                            class="w-full bg-[#0B0907] border border-[#F3ECE1]/15 rounded-sm px-4 py-3 text-sm text-[#F3ECE1] placeholder-[#9C8E80]/60 focus:outline-none focus:border-[#BE7B3F] transition-colors resize-none"></textarea>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full py-3.5 rounded-sm bg-[#BE7B3F] text-[#0B0907] font-medium text-sm hover:bg-[#E2A159] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BE7B3F]">
+                        Send message
+                    </button>
+
+                    <p class="font-mono text-[10px] text-[#9C8E80]/70 text-center">We typically reply within 24 hours.</p>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock  %}
+
+{% block footer %}
+<footer class="bg-[#0B0907] border-t border-[#F3ECE1]/10">
+
+    <div class="max-w-7xl mx-auto px-6 py-16 sm:py-20">
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12">
+
+            <!-- Logo -->
+            <div>
+                <img src="{% static 'image/koffee-logo.webp' %}" class="h-10 sm:h-12 mb-5" alt="Koffee">
+                <p class="text-[#9C8E80] leading-7 text-sm sm:text-base max-w-xs">
+                    Crafting premium coffee experiences through carefully
+                    selected beans, expert brewing, and real hospitality.
+                </p>
+            </div>
+
+            <!-- Links -->
+            <div>
+                <h3 class="font-mono text-[11px] tracking-[1.5px] uppercase text-[#F3ECE1] mb-5">Quick links</h3>
+                <ul class="space-y-3 text-[#9C8E80] text-sm">
+                    <li><a href="/home/" class="hover:text-[#BE7B3F] transition-colors">Home</a></li>
+                    <li><a href="/about/" class="hover:text-[#BE7B3F] transition-colors">About</a></li>
+                    <li><a href="/product/" class="hover:text-[#BE7B3F] transition-colors">Menu</a></li>
+                    <li><a href="/contact/" class="hover:text-[#BE7B3F] transition-colors">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Hours -->
+            <div>
+                <h3 class="font-mono text-[11px] tracking-[1.5px] uppercase text-[#F3ECE1] mb-5">Opening hours</h3>
+                <div class="space-y-3 text-[#9C8E80] text-sm">
+                    <div class="flex justify-between gap-4"><span>Mon – Fri</span><span class="text-[#F3ECE1]">8:00 AM – 10:00 PM</span></div>
+                    <div class="flex justify-between gap-4"><span>Sat – Sun</span><span class="text-[#F3ECE1]">9:00 AM – 11:00 PM</span></div>
+                </div>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h3 class="font-mono text-[11px] tracking-[1.5px] uppercase text-[#F3ECE1] mb-5">Contact</h3>
+                <div class="space-y-3 text-[#9C8E80] text-sm">
+                    <p>Main Coffee Street, Lahore</p>
+                    <p>+92 300 1234567</p>
+                    <p>info@koffee.com</p>
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <a href="#" aria-label="Facebook" class="w-10 h-10 rounded-sm border border-[#F3ECE1]/10 flex items-center justify-center text-[#F3ECE1] hover:border-[#BE7B3F] hover:text-[#BE7B3F] transition-colors"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram" class="w-10 h-10 rounded-sm border border-[#F3ECE1]/10 flex items-center justify-center text-[#F3ECE1] hover:border-[#BE7B3F] hover:text-[#BE7B3F] transition-colors"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter" class="w-10 h-10 rounded-sm border border-[#F3ECE1]/10 flex items-center justify-center text-[#F3ECE1] hover:border-[#BE7B3F] hover:text-[#BE7B3F] transition-colors"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube" class="w-10 h-10 rounded-sm border border-[#F3ECE1]/10 flex items-center justify-center text-[#F3ECE1] hover:border-[#BE7B3F] hover:text-[#BE7B3F] transition-colors"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="border-t border-[#F3ECE1]/10 mt-14 pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-center font-mono text-[11px] text-[#9C8E80]/70">
+            <p>© 2026 Koffee. All rights reserved.</p>
+            <p>Designed & developed by <span class="text-[#BE7B3F]">Khuzama</span></p>
+        </div>
+
+    </div>
+
+</footer>
+{% endblock %}

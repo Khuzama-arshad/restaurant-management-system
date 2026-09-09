@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-yd#tr29-v6@w5$htksj*5w4j+z)(&mu37d*x__^sm0kl^z63tu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
- 
-ALLOWED_HOSTS = []
+DEBUG = False
+
+ALLOWED_HOSTS = ['khuzamaarshad.pythonanywhere.com']
 
 # Application definition
 
@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'tailwind',
     "widget_tweaks",
     'theme',
-    'django_browser_reload',
 ]
 
 TAILWIND_APP_NAME = "theme"
@@ -136,3 +135,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+LOGIN_URL = '/login/'

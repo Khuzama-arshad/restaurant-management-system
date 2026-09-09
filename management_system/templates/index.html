@@ -1,0 +1,714 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block hero %}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    .font-display { font-family: 'Inter', system-ui, sans-serif; }
+    .font-accent  { font-family: 'Playfair Display', serif; }
+
+    /* Grid texture */
+    .grid-texture {
+        background-image: linear-gradient(#fff 1px, transparent 1px),
+                          linear-gradient(90deg, #fff 1px, transparent 1px);
+        background-size: 44px 44px;
+    }
+
+    /* Navbar scroll effect */
+    #navbar { transition: background 0.3s ease, backdrop-filter 0.3s ease; }
+
+    /* Underline nav hover */
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1.5px;
+        background: #BE7B3F;
+        transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* Roast card data rows */
+    .roast-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        font-family: 'Inter', monospace;
+        font-size: 11px;
+        letter-spacing: 0.04em;
+    }
+    .roast-row:last-child { border-bottom: none; }
+    .roast-label { color: #BE7B3F; text-transform: uppercase; letter-spacing: 0.08em; }
+    .roast-value { color: #f4ece0; font-weight: 600; }
+
+    /* Roast slider */
+    .roast-bar {
+        width: 100%;
+        height: 2px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 9999px;
+        position: relative;
+        margin-top: 4px;
+    }
+    .roast-fill {
+        position: absolute;
+        left: 0; top: 0;
+        height: 100%;
+        width: 35%;
+        background: #BE7B3F;
+        border-radius: 9999px;
+    }
+    .roast-dot {
+        position: absolute;
+        top: 50%;
+        left: 35%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 9999px;
+        background: #f4ece0;
+        border: 1px solid #BE7B3F;
+    }
+
+    /* Card hover lift */
+    .feature-card {
+        transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .feature-card:hover {
+        border-color: rgba(190,123,63,0.4);
+        transform: translateY(-6px);
+        box-shadow: 0 24px 60px rgba(190,123,63,0.12);
+    }
+
+    /* Testimonial hover */
+    .testi-card {
+        transition: border-color 0.4s ease, transform 0.4s ease;
+    }
+    .testi-card:hover {
+        border-color: rgba(190,123,63,0.35);
+        transform: translateY(-6px);
+    }
+
+    /* Ambient orb */
+    @keyframes orb-pulse {
+        0%, 100% { opacity: 0.18; transform: scale(1); }
+        50% { opacity: 0.28; transform: scale(1.06); }
+    }
+    .orb { animation: orb-pulse 6s ease-in-out infinite; }
+</style>
+
+<!-- ═══════════════════════════  NAVBAR  ═══════════════════════════ -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-black/40 backdrop-blur-xl border-b border-white/[0.07] font-display" id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+        <div class="flex items-center justify-between h-16 sm:h-20">
+
+            <a href="/"><img src="{% static 'image/koffee-logo.webp' %}" class="h-10 sm:h-11 lg:h-12" alt="Koffee"></a>
+
+            <!-- Desktop links -->
+            <ul class="hidden lg:flex items-center gap-10 text-white/80 text-sm font-medium">
+                {% for label, href in nav_links %}
+                <li>
+                    <a href="{{ href }}" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">{{ label }}</a>
+                </li>
+                {% empty %}
+                <li><a href="/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Home</a></li>
+                <li><a href="/about/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">About</a></li>
+                <li><a href="/product/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Menu</a></li>
+                <li><a href="/contact/" class="nav-link relative py-2 hover:text-[#BE7B3F] transition duration-300">Contact</a></li>
+                {% endfor %}
+            </ul>
+
+            <!-- Right icons -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="/cart/"
+                   class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white
+                          hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                    <i class="fa-solid fa-cart-shopping text-sm"></i>
+                </a>
+
+                <div class="relative group">
+                    <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                                   hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                        <i class="fa-regular fa-user text-white text-sm"></i>
+                    </button>
+                    <div class="absolute right-0 mt-3 w-44 rounded-2xl bg-[#111] border border-white/10 shadow-2xl
+                                opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 overflow-hidden">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i> Logout
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200">
+                            <i class="fa-solid fa-right-to-bracket text-xs"></i> Login
+                        </a>
+                        <a href="{% url 'signup' %}" class="flex items-center gap-3 px-5 py-3.5 hover:bg-[#BE7B3F] text-white/80 hover:text-white text-sm transition duration-200 border-t border-white/10">
+                            <i class="fa-solid fa-user-plus text-xs"></i> Sign Up
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button id="menuBtn"
+                        class="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center
+                               text-white hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300">
+                    <i class="fa-solid fa-bars text-sm" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="lg:hidden hidden bg-black/95 backdrop-blur-xl border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col gap-1.5">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-house w-4 text-xs"></i> Home
+            </a>
+            <a href="/about/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-circle-info w-4 text-xs"></i> About
+            </a>
+            <a href="/product/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-mug-hot w-4 text-xs"></i> Menu
+            </a>
+            <a href="/contact/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/80 hover:bg-[#BE7B3F]/15 hover:text-[#BE7B3F] transition duration-200 text-sm">
+                <i class="fa-solid fa-envelope w-4 text-xs"></i> Contact
+            </a>
+            <div class="mt-3 pt-4 border-t border-white/10">
+                {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#BE7B3F] text-white font-semibold text-sm">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+                {% else %}
+                <div class="flex gap-3">
+                    <a href="{% url 'login' %}" class="flex-1 text-center px-4 py-3 rounded-xl border border-white/20 text-white text-sm hover:bg-white/10 transition">Login</a>
+                    <a href="{% url 'signup' %}" class="flex-1 text-center px-4 py-3 rounded-xl bg-[#BE7B3F] text-white text-sm font-semibold hover:opacity-90 transition">Sign Up</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuIcon = document.getElementById('menuIcon');
+menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    menuIcon.className = mobileMenu.classList.contains('hidden')
+        ? 'fa-solid fa-bars text-sm'
+        : 'fa-solid fa-xmark text-sm';
+});
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('bg-black/90');
+        navbar.classList.remove('bg-black/40');
+    } else {
+        navbar.classList.add('bg-black/40');
+        navbar.classList.remove('bg-black/90');
+    }
+});
+</script>
+
+<!-- ═══════════════════════════  HERO  ═══════════════════════════ -->
+<section class="relative min-h-screen bg-[#0a0805] overflow-hidden font-display flex items-center">
+
+    <!-- Subtle photographic backdrop for depth, kept dark/desaturated so text stays the focus -->
+    <div class="absolute inset-0 bg-cover bg-center opacity-[0.07] mix-blend-luminosity pointer-events-none"
+         style="background-image:url('{% static 'image/hero-beans.jpg' %}')"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#0a0805] via-[#0a0805]/85 to-[#0a0805] pointer-events-none"></div>
+
+    <!-- Grid texture -->
+    <div class="absolute inset-0 grid-texture opacity-[0.035] pointer-events-none"></div>
+
+    <!-- Ambient orbs -->
+    <div class="orb absolute -left-40 top-1/3 w-[320px] h-[320px] sm:w-[560px] sm:h-[560px] rounded-full bg-[#883b04] blur-[200px] opacity-20 pointer-events-none"></div>
+    <div class="absolute right-0 bottom-0 w-[260px] h-[260px] sm:w-[400px] sm:h-[400px] rounded-full bg-[#BE7B3F] blur-[200px] opacity-[0.08] pointer-events-none"></div>
+
+    <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-28 pb-16 lg:pt-0 lg:pb-0 lg:min-h-screen lg:flex lg:items-center">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full">
+
+            <!-- LEFT: text -->
+            <div>
+                <!-- Eyebrow -->
+                <div class="flex items-center gap-3 mb-6 sm:mb-8">
+                    <span class="block w-8 h-px bg-[#BE7B3F]"></span>
+                    <p class="text-[#BE7B3F] text-[10px] font-bold tracking-[6px] uppercase">Roastery No. 015 — Est. 2015</p>
+                </div>
+
+                <!-- Headline -->
+                <h1 class="font-accent text-4xl sm:text-6xl md:text-7xl font-black text-[#f4ece0] leading-[1.1] tracking-tight">
+                    Coffee, read<br>
+                    <em class="not-italic text-[#BE7B3F] italic">like a label,</em><br>
+                    poured like<br>
+                    a <em class="not-italic text-[#BE7B3F] italic">ritual.</em>
+                </h1>
+
+                <!-- Body -->
+                <p class="mt-6 sm:mt-7 text-[#8a7b68] text-sm sm:text-base leading-8 max-w-md">
+                    We source single-origin lots, roast in small batches, and put the same information on every cup that specialty growers put on the bag — origin, process, and the date it was roasted.
+                </p>
+
+                <!-- CTAs -->
+                <div class="mt-8 sm:mt-10 flex flex-wrap gap-3 sm:gap-4">
+                    <a href="/product/"
+                       class="inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#BE7B3F] text-[#f4ece0]
+                              text-sm font-bold tracking-wide hover:opacity-90 hover:scale-105
+                              transition-all duration-300 shadow-lg shadow-[#BE7B3F]/20">
+                        Explore the menu
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                    <a href="/about/"
+                       class="inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-white/20
+                              text-[#f4ece0] text-sm font-bold hover:bg-white/8 hover:border-white/40
+                              transition-all duration-300">
+                        Visit the roastery
+                    </a>
+                </div>
+
+                <!-- Stats row -->
+                <div class="mt-10 sm:mt-14 flex items-center gap-6 sm:gap-10">
+                    <div>
+                        <p class="font-accent text-2xl sm:text-3xl font-black text-[#BE7B3F]">10+</p>
+                        <p class="text-[#6b5f50] text-[9px] sm:text-[10px] uppercase tracking-[3px] sm:tracking-[4px] mt-1">Years</p>
+                    </div>
+                    <div class="w-px h-10 bg-white/10"></div>
+                    <div>
+                        <p class="font-accent text-2xl sm:text-3xl font-black text-[#BE7B3F]">50+</p>
+                        <p class="text-[#6b5f50] text-[9px] sm:text-[10px] uppercase tracking-[3px] sm:tracking-[4px] mt-1">Coffees</p>
+                    </div>
+                    <div class="w-px h-10 bg-white/10"></div>
+                    <div>
+                        <p class="font-accent text-2xl sm:text-3xl font-black text-[#BE7B3F]">5K+</p>
+                        <p class="text-[#6b5f50] text-[9px] sm:text-[10px] uppercase tracking-[3px] sm:tracking-[4px] mt-1">Customers</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: image + floating card -->
+            <div class="relative flex flex-col items-center lg:items-end">
+
+                <!-- Hero image -->
+                <div class="relative w-full max-w-lg lg:max-w-none rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-2xl
+                            bg-gradient-to-br from-[#3a2414] via-[#1c130c] to-[#0a0805]">
+                    <img src="{% static 'image/Indonesian-Coffee-Roastery.webp' %}"
+                         alt="Coffee"
+                         onerror="this.style.display='none'"
+                         class="w-full h-[320px] sm:h-[420px] lg:h-[600px] object-cover rounded-3xl">
+                    <!-- Light brand-toned tint, unifies the photo with the site's warm dark palette without hiding it -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#883b04]/10 via-transparent to-[#0a0805]/25 mix-blend-multiply rounded-3xl"></div>
+                    <!-- Soft vignette at the very bottom only, for card legibility -->
+                    <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0a0805]/70 to-transparent rounded-b-3xl pointer-events-none"></div>
+
+
+                <!-- Today's Roast card — full width & stacked below image on mobile, floats over the image from sm: up -->
+                <div class="w-full sm:w-64 mt-4 sm:mt-0 sm:absolute sm:bottom-8 sm:right-0 lg:-right-4
+                            bg-[#100d0a]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[#BE7B3F] text-[9px] font-bold tracking-[5px] uppercase">Today's Roast</span>
+                        <span class="text-[#6b5f50] text-[9px] font-mono">#042</span>
+                    </div>
+                    <div class="roast-row">
+                        <span class="roast-label">Origin</span>
+                        <span class="roast-value">Yirgacheffe, ET</span>
+                    </div>
+                    <div class="roast-row">
+                        <span class="roast-label">Process</span>
+                        <span class="roast-value">Washed</span>
+                    </div>
+                    <div class="roast-row">
+                        <span class="roast-label">Altitude</span>
+                        <span class="roast-value">1,950m</span>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-[9px] text-[#6b5f50] font-mono uppercase tracking-wider mb-2">
+                            <span>Light</span><span>Medium</span><span>Dark</span>
+                        </div>
+                        <div class="roast-bar">
+                            <div class="roast-fill"></div>
+                            <div class="roast-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="hidden sm:block absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-40">
+        <div class="w-6 h-10 rounded-full border border-white/30 flex justify-center">
+            <div class="w-0.5 h-2.5 bg-[#BE7B3F] rounded-full mt-2 animate-pulse"></div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block about %}
+
+<!-- ═══════════════════════════  ABOUT  ═══════════════════════════ -->
+<section class="relative py-16 sm:py-20 md:py-28 bg-[#0a0805] overflow-hidden font-display">
+    <div class="absolute inset-0 grid-texture opacity-[0.03] pointer-events-none"></div>
+    <div class="orb absolute -top-40 -left-40 w-[500px] h-[500px] bg-[#883b04] opacity-[0.18] blur-[180px] rounded-full pointer-events-none"></div>
+    <div class="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#BE7B3F] opacity-[0.07] blur-[180px] rounded-full pointer-events-none"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+        <div class="grid lg:grid-cols-2 gap-12 sm:gap-16 xl:gap-24 items-center">
+
+            <!-- Image column -->
+            <div class="relative mt-6 lg:mt-0">
+                <img src="{% static 'image/about-img.webp' %}"
+                     alt="About Koffee"
+                     class="rounded-3xl shadow-2xl w-full object-cover">
+
+                <!-- Inset image -->
+                <img src="{% static 'image/images(2).jpg' %}"
+                     alt="Barista"
+                     class="absolute -bottom-10 -right-6 w-40 lg:w-52 rounded-2xl border-4 border-[#0a0805] shadow-2xl hidden sm:block">
+
+                <!-- Experience badge -->
+                <div class="absolute top-6 -left-3 sm:-left-5 bg-[#BE7B3F] text-[#f4ece0] rounded-2xl px-5 sm:px-6 py-4 sm:py-5 shadow-2xl">
+                    <p class="font-accent text-2xl sm:text-3xl font-black leading-none">10+</p>
+                    <p class="text-[8px] sm:text-[9px] tracking-[2px] sm:tracking-[3px] uppercase mt-1.5 opacity-90">Years Experience</p>
+                </div>
+            </div>
+
+            <!-- Text column -->
+            <div>
+                <div class="flex items-center gap-3 mb-5 sm:mb-6">
+                    <span class="block w-8 h-px bg-[#BE7B3F]"></span>
+                    <p class="text-[#BE7B3F] text-[10px] font-bold tracking-[6px] uppercase">About Us</p>
+                </div>
+
+                <h2 class="font-accent text-3xl sm:text-4xl md:text-5xl font-black text-[#f4ece0] leading-tight">
+                    More Than Coffee,<br>
+                    <em class="not-italic italic text-[#BE7B3F]">It's A Lifestyle</em>
+                </h2>
+
+                <p class="mt-5 sm:mt-6 text-[#8a7b68] leading-8 text-sm md:text-base">
+                    We believe coffee should be more than just a drink — it should be an experience. Every bean is carefully selected, expertly roasted, and handcrafted by passionate baristas.
+                </p>
+
+                <!-- Feature grid -->
+                <div class="grid sm:grid-cols-2 gap-3 mt-8 sm:mt-10">
+                    {% for icon, title, desc in about_features %}
+                    <div class="feature-card flex items-center gap-4 bg-white/[0.04] rounded-2xl p-4 border border-white/[0.07]">
+                        <div class="w-11 h-11 rounded-xl bg-[#BE7B3F] flex items-center justify-center flex-shrink-0">
+                            <i class="{{ icon }} text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[#f4ece0] font-bold text-sm">{{ title }}</h4>
+                            <p class="text-[#6b5f50] text-xs mt-0.5">{{ desc }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="feature-card flex items-center gap-4 bg-white/[0.04] rounded-2xl p-4 border border-white/[0.07]">
+                        <div class="w-11 h-11 rounded-xl bg-[#BE7B3F] flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-mug-hot text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[#f4ece0] font-bold text-sm">Premium Beans</h4>
+                            <p class="text-[#6b5f50] text-xs mt-0.5">Freshly roasted every day.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card flex items-center gap-4 bg-white/[0.04] rounded-2xl p-4 border border-white/[0.07]">
+                        <div class="w-11 h-11 rounded-xl bg-[#BE7B3F] flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-award text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[#f4ece0] font-bold text-sm">Expert Baristas</h4>
+                            <p class="text-[#6b5f50] text-xs mt-0.5">Crafted with passion.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card flex items-center gap-4 bg-white/[0.04] rounded-2xl p-4 border border-white/[0.07]">
+                        <div class="w-11 h-11 rounded-xl bg-[#BE7B3F] flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-seedling text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[#f4ece0] font-bold text-sm">Organic Coffee</h4>
+                            <p class="text-[#6b5f50] text-xs mt-0.5">Sustainably sourced beans.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card flex items-center gap-4 bg-white/[0.04] rounded-2xl p-4 border border-white/[0.07]">
+                        <div class="w-11 h-11 rounded-xl bg-[#BE7B3F] flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-heart text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[#f4ece0] font-bold text-sm">Made With Love</h4>
+                            <p class="text-[#6b5f50] text-xs mt-0.5">Every cup prepared with care.</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <a href="/product/"
+                   class="inline-flex items-center gap-3 mt-8 sm:mt-10 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#BE7B3F]
+                          text-[#f4ece0] font-bold text-sm hover:opacity-90 hover:scale-105
+                          transition-all duration-300 shadow-lg shadow-[#BE7B3F]/20">
+                    Explore Menu <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═════════════════════  WHY CHOOSE US  ═════════════════════ -->
+<section class="relative py-16 sm:py-20 md:py-28 bg-[#060504] overflow-hidden font-display">
+    <div class="absolute inset-0 grid-texture opacity-[0.03] pointer-events-none"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+
+        <!-- Header -->
+        <div class="text-center mb-12 sm:mb-16">
+            <div class="flex items-center justify-center gap-3 mb-4 sm:mb-5">
+                <span class="block w-8 h-px bg-[#BE7B3F]"></span>
+                <p class="text-[#BE7B3F] text-[10px] font-bold tracking-[6px] uppercase">Why Choose Us</p>
+                <span class="block w-8 h-px bg-[#BE7B3F]"></span>
+            </div>
+            <h2 class="font-accent text-3xl sm:text-4xl md:text-5xl font-black text-[#f4ece0]">
+                Coffee Crafted To <em class="not-italic italic text-[#BE7B3F]">Perfection</em>
+            </h2>
+            <p class="text-[#8a7b68] mt-4 sm:mt-5 max-w-xl mx-auto text-sm leading-7">
+                We combine premium ingredients, skilled craftsmanship, and exceptional service.
+            </p>
+        </div>
+
+        <!-- Cards -->
+        <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+            <!-- Card 1 -->
+            <div class="feature-card group bg-white/[0.04] border border-white/[0.08] rounded-3xl p-6 sm:p-8">
+                <div class="w-14 h-14 rounded-2xl bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center
+                            text-[#BE7B3F] text-xl group-hover:bg-[#BE7B3F] group-hover:text-white group-hover:border-[#BE7B3F] transition duration-400">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+                <h3 class="text-[#f4ece0] text-lg font-bold mt-6 sm:mt-7 font-accent">Fresh Coffee</h3>
+                <p class="text-[#8a7b68] mt-3 text-sm leading-7">Brewed fresh every day using carefully selected premium beans.</p>
+            </div>
+            <!-- Card 2 -->
+            <div class="feature-card group bg-white/[0.04] border border-white/[0.08] rounded-3xl p-6 sm:p-8">
+                <div class="w-14 h-14 rounded-2xl bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center
+                            text-[#BE7B3F] text-xl group-hover:bg-[#BE7B3F] group-hover:text-white group-hover:border-[#BE7B3F] transition duration-400">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3 class="text-[#f4ece0] text-lg font-bold mt-6 sm:mt-7 font-accent">Skilled Baristas</h3>
+                <p class="text-[#8a7b68] mt-3 text-sm leading-7">Passionate professionals crafting every cup with precision.</p>
+            </div>
+            <!-- Card 3 -->
+            <div class="feature-card group bg-white/[0.04] border border-white/[0.08] rounded-3xl p-6 sm:p-8">
+                <div class="w-14 h-14 rounded-2xl bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center
+                            text-[#BE7B3F] text-xl group-hover:bg-[#BE7B3F] group-hover:text-white group-hover:border-[#BE7B3F] transition duration-400">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <h3 class="text-[#f4ece0] text-lg font-bold mt-6 sm:mt-7 font-accent">Fast Delivery</h3>
+                <p class="text-[#8a7b68] mt-3 text-sm leading-7">Fresh coffee delivered quickly while maintaining its rich flavor.</p>
+            </div>
+            <!-- Card 4 -->
+            <div class="feature-card group bg-white/[0.04] border border-white/[0.08] rounded-3xl p-6 sm:p-8">
+                <div class="w-14 h-14 rounded-2xl bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center
+                            text-[#BE7B3F] text-xl group-hover:bg-[#BE7B3F] group-hover:text-white group-hover:border-[#BE7B3F] transition duration-400">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <h3 class="text-[#f4ece0] text-lg font-bold mt-6 sm:mt-7 font-accent">Premium Quality</h3>
+                <p class="text-[#8a7b68] mt-3 text-sm leading-7">Every ingredient chosen for a consistently exceptional experience.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block footer %}
+
+<!-- ═══════════════════════  TESTIMONIALS  ═══════════════════════ -->
+<section class="relative py-16 sm:py-20 md:py-28 bg-[#0a0805] overflow-hidden font-display">
+    <div class="absolute inset-0 grid-texture opacity-[0.03] pointer-events-none"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+
+        <div class="text-center mb-12 sm:mb-16">
+            <div class="flex items-center justify-center gap-3 mb-4 sm:mb-5">
+                <span class="block w-8 h-px bg-[#BE7B3F]"></span>
+                <p class="text-[#BE7B3F] text-[10px] font-bold tracking-[6px] uppercase">Testimonials</p>
+                <span class="block w-8 h-px bg-[#BE7B3F]"></span>
+            </div>
+            <h2 class="font-accent text-3xl sm:text-4xl md:text-5xl font-black text-[#f4ece0]">
+                What Our <em class="not-italic italic text-[#BE7B3F]">Customers Say</em>
+            </h2>
+        </div>
+
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
+            <!-- Card 1 -->
+            <div class="testi-card bg-[#100d0a] rounded-3xl p-6 sm:p-7 border border-white/[0.08]">
+                <div class="flex gap-0.5 mb-5">
+                    {% for _ in "12345" %}
+                    <svg class="w-3.5 h-3.5 text-[#BE7B3F]" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    {% endfor %}
+                </div>
+                <p class="text-[#8a7b68] leading-8 text-sm">"The coffee here is absolutely amazing. Rich flavor, premium quality, and excellent customer service."</p>
+                <div class="flex items-center mt-7 gap-4">
+                    <img src="{% static 'image/user1.jpg' %}" class="w-11 h-11 rounded-full object-cover border-2 border-[#BE7B3F]/30 flex-shrink-0" alt="Sarah">
+                    <div>
+                        <h4 class="text-[#f4ece0] font-semibold text-sm">Sarah Johnson</h4>
+                        <p class="text-[#6b5f50] text-xs mt-0.5">Coffee Lover</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="testi-card bg-[#100d0a] rounded-3xl p-6 sm:p-7 border border-white/[0.08]">
+                <div class="flex gap-0.5 mb-5">
+                    {% for _ in "12345" %}
+                    <svg class="w-3.5 h-3.5 text-[#BE7B3F]" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    {% endfor %}
+                </div>
+                <p class="text-[#8a7b68] leading-8 text-sm">"One of the best cafés I've visited. The atmosphere, coffee, and desserts are all exceptional."</p>
+                <div class="flex items-center mt-7 gap-4">
+                    <img src="{% static 'image/user2.jpg' %}" class="w-11 h-11 rounded-full object-cover border-2 border-[#BE7B3F]/30 flex-shrink-0" alt="Michael">
+                    <div>
+                        <h4 class="text-[#f4ece0] font-semibold text-sm">Michael Brown</h4>
+                        <p class="text-[#6b5f50] text-xs mt-0.5">Entrepreneur</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="testi-card bg-[#100d0a] rounded-3xl p-6 sm:p-7 border border-white/[0.08] sm:col-span-2 md:col-span-1">
+                <div class="flex gap-0.5 mb-5">
+                    {% for _ in "12345" %}
+                    <svg class="w-3.5 h-3.5 text-[#BE7B3F]" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    {% endfor %}
+                </div>
+                <p class="text-[#8a7b68] leading-8 text-sm">"Beautiful ambiance with premium coffee. Every visit feels special and memorable."</p>
+                <div class="flex items-center mt-7 gap-4">
+                    <img src="{% static 'image/user3.jpg' %}" class="w-11 h-11 rounded-full object-cover border-2 border-[#BE7B3F]/30 flex-shrink-0" alt="Emma">
+                    <div>
+                        <h4 class="text-[#f4ece0] font-semibold text-sm">Emma Wilson</h4>
+                        <p class="text-[#6b5f50] text-xs mt-0.5">Designer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════  NEWSLETTER  ═══════════════════════ -->
+<section class="relative py-16 sm:py-20 md:py-24 bg-[#060504] overflow-hidden font-display">
+    <div class="absolute inset-0 grid-texture opacity-[0.03] pointer-events-none"></div>
+    <div class="absolute -top-32 right-0 w-[500px] h-[500px] rounded-full bg-[#BE7B3F] blur-[200px] opacity-[0.08] pointer-events-none"></div>
+
+    <div class="relative max-w-2xl mx-auto text-center px-4 sm:px-6">
+        <div class="flex items-center justify-center gap-3 mb-4 sm:mb-5">
+            <span class="block w-8 h-px bg-[#BE7B3F]"></span>
+            <p class="text-[#BE7B3F] text-[10px] font-bold tracking-[6px] uppercase">Newsletter</p>
+            <span class="block w-8 h-px bg-[#BE7B3F]"></span>
+        </div>
+        <h2 class="font-accent text-3xl sm:text-4xl md:text-5xl font-black text-[#f4ece0]">
+            Stay <em class="not-italic italic text-[#BE7B3F]">Connected</em>
+        </h2>
+        <p class="text-[#8a7b68] mt-4 sm:mt-5 text-sm leading-7">
+            Subscribe to receive exclusive offers, coffee updates, and our latest seasonal drinks.
+        </p>
+        <form class="mt-7 sm:mt-8 flex flex-col sm:flex-row gap-3">
+            <input type="email" placeholder="Enter your email address…"
+                   class="flex-1 min-w-0 rounded-full px-6 py-3.5 sm:py-4 bg-white/[0.05] border border-white/10 text-[#f4ece0]
+                          text-sm placeholder-[#6b5f50] focus:outline-none focus:border-[#BE7B3F] transition duration-200">
+            <button type="submit"
+                    class="px-8 py-3.5 sm:py-4 rounded-full bg-[#BE7B3F] text-[#f4ece0] font-bold text-sm
+                           hover:opacity-90 hover:scale-105 transition-all duration-300 whitespace-nowrap
+                           shadow-lg shadow-[#BE7B3F]/20">
+                Subscribe
+            </button>
+        </form>
+    </div>
+</section>
+
+<!-- ═══════════════════════  FOOTER  ═══════════════════════ -->
+<footer class="bg-[#040302] border-t border-white/[0.05] font-display">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-14 sm:py-20">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12">
+
+            <!-- Brand -->
+            <div class="sm:col-span-2 lg:col-span-1">
+                <img src="{% static 'image/koffee-logo.webp' %}" class="h-11 sm:h-12 mb-5" alt="Koffee">
+                <p class="text-[#6b5f50] text-sm leading-7">Crafting premium coffee experiences through carefully selected beans, expert brewing, and exceptional hospitality.</p>
+                <div class="flex gap-3 mt-7">
+                    <a href="#" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300"><i class="fab fa-facebook-f text-white text-xs"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300"><i class="fab fa-instagram text-white text-xs"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300"><i class="fab fa-twitter text-white text-xs"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#BE7B3F] hover:border-[#BE7B3F] transition duration-300"><i class="fab fa-youtube text-white text-xs"></i></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-[#f4ece0] font-bold text-xs tracking-widest uppercase mb-6">Quick Links</h3>
+                <ul class="space-y-3">
+                    <li><a href="/" class="text-[#6b5f50] hover:text-[#BE7B3F] transition text-sm flex items-center gap-2.5"><span class="w-1 h-1 rounded-full bg-[#BE7B3F] flex-shrink-0"></span>Home</a></li>
+                    <li><a href="/about/" class="text-[#6b5f50] hover:text-[#BE7B3F] transition text-sm flex items-center gap-2.5"><span class="w-1 h-1 rounded-full bg-[#BE7B3F] flex-shrink-0"></span>About</a></li>
+                    <li><a href="/product/" class="text-[#6b5f50] hover:text-[#BE7B3F] transition text-sm flex items-center gap-2.5"><span class="w-1 h-1 rounded-full bg-[#BE7B3F] flex-shrink-0"></span>Menu</a></li>
+                    <li><a href="/contact/" class="text-[#6b5f50] hover:text-[#BE7B3F] transition text-sm flex items-center gap-2.5"><span class="w-1 h-1 rounded-full bg-[#BE7B3F] flex-shrink-0"></span>Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Hours -->
+            <div>
+                <h3 class="text-[#f4ece0] font-bold text-xs tracking-widest uppercase mb-6">Opening Hours</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2.5 border-b border-white/[0.05]">
+                        <span class="text-[#6b5f50] text-sm">Mon – Fri</span>
+                        <span class="text-[#BE7B3F] text-sm font-semibold">8AM – 10PM</span>
+                    </div>
+                    <div class="flex justify-between py-2.5 border-b border-white/[0.05]">
+                        <span class="text-[#6b5f50] text-sm">Sat – Sun</span>
+                        <span class="text-[#BE7B3F] text-sm font-semibold">9AM – 11PM</span>
+                    </div>
+                    <div class="flex items-center gap-2 pt-1">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-green-400 text-xs font-semibold">Open Now</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h3 class="text-[#f4ece0] font-bold text-xs tracking-widest uppercase mb-6">Contact</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-location-dot text-[#BE7B3F] text-xs"></i>
+                        </div>
+                        <span class="text-[#6b5f50] text-sm leading-relaxed">Main Coffee Street, Lahore</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-phone text-[#BE7B3F] text-xs"></i>
+                        </div>
+                        <span class="text-[#6b5f50] text-sm">+92 300 1234567</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-[#BE7B3F]/10 border border-[#BE7B3F]/20 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-envelope text-[#BE7B3F] text-xs"></i>
+                        </div>
+                        <span class="text-[#6b5f50] text-sm">info@koffee.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 sm:mt-16 pt-8 border-t border-white/[0.05] flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+            <p class="text-[#3d3530] text-sm">© 2026 Koffee. All Rights Reserved.</p>
+            <p class="text-[#3d3530] text-sm">Designed &amp; Developed by <span class="text-[#BE7B3F] font-semibold">Khuzama</span></p>
+        </div>
+    </div>
+</footer>
+
+{% endblock %}
